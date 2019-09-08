@@ -92,7 +92,7 @@ class StationPage extends React.Component {
                       style={{
                         flex: 1,
                         borderTop: `2px solid ${groupTheme.primaryColor}`,
-                        margin: 5,
+                        margin: 7,
                         minWidth: 260,
                         maxWidth: 700
                       }}
@@ -118,7 +118,7 @@ class StationPage extends React.Component {
                                 </h3>
                                 <h3>{departure.runInfo.destination_name}</h3>
                                 <h4>{expressServiceMssage}</h4>
-                                <Link to={`/run/${departure.runInfo.run_id}`}>
+                                <Link to={`/runs/${departure.runInfo.run_id}`}>
                                   More Info
                                 </Link>
                               </div>

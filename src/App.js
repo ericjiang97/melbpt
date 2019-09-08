@@ -9,6 +9,7 @@ import StationPage from "./pages/StationPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { getRoutes } from "./actions/getRoutes";
 import "./index.css";
+import RunsPage from "./pages/RunsPage";
 
 class App extends React.Component {
   componentDidMount() {
@@ -26,6 +27,7 @@ class App extends React.Component {
           <Router>
             <Route exact path="/" component={HomePage} />
             <Route path="/station/:stopId" component={StationPage} />
+            <Route path="/runs/:runId" component={RunsPage} />
           </Router>
         </div>
         <div>Footer</div>
