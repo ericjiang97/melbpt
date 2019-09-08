@@ -1,23 +1,55 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import { Redirect, Link } from "react-router-dom";
+import moment from "moment";
+
+import { ListItem, ListItemText, List } from "@material-ui/core";
+
 import PtvApiService from "../Services/PtvApiService";
+import GetLineGroup from "../config/styles/GetLineGroup";
+import lineTheme from "../config/styles/LineTheme";
 
 class StationPage extends React.Component {
-  state = { stationInfo: null };
+  state = { stationInfo: null, departures: null };
+
   componentDidMount() {
     const {
       match: { params }
     } = this.props;
+
     PtvApiService.getStationInfo(params.stopId).then(stationInfo => {
       this.setState({ stationInfo });
     });
 
-    PtvApiService.getStationDepartures(params.stopId, 5).then(departures => {
-      console.log(departures);
-    });
+    PtvApiService.getStationDepartures(params.stopId, 5).then(
+      async stationDepartures => {
+        const departures = {};
+        const directions = {};
+        console.log(stationDepartures);
+        for (var departure of stationDepartures.departures) {
+          if (
+            moment(departure.scheduled_departure_utc).isBefore(
+              moment().add(30, "minutes")
+            )
+          ) {
+            const lineGroup = GetLineGroup(departure.route_id);
+            const runInfo = await PtvApiService.getRunInfo(departure.run_id);
+            if (!departures[lineGroup]) {
+              departures[lineGroup] = [];
+            }
+            departures[lineGroup].push({ departure, runInfo: runInfo.runs[0] });
+          }
+        }
+        console.log(departures);
+        this.setState({
+          departures
+        });
+      }
+    );
   }
   render() {
-    const { stationInfo } = this.state;
+    console.log(this.props.routes);
+    const { stationInfo, departures } = this.state;
     if (!this.props.match.params || !this.props.match) {
       return <Redirect to="/" />;
     }
@@ -39,10 +71,140 @@ class StationPage extends React.Component {
             </div>
           )}
         </div>
-        <div style={{ flex: 3 }}></div>
+        <div
+          style={{
+            flex: 3
+          }}
+        >
+          <div
+            style={{
+              padding: "10px 24px",
+              display: "flex",
+              flexWrap: "wrap"
+            }}
+          >
+            {departures && (
+              <>
+                {Object.keys(departures).map(departureGroup => {
+                  const groupTheme = lineTheme[departureGroup];
+                  return (
+                    <div
+                      style={{
+                        flex: 1,
+                        borderTop: `2px solid ${groupTheme.primaryColor}`,
+                        margin: 5,
+                        minWidth: 260,
+                        maxWidth: 700
+                      }}
+                    >
+                      <div style={{ padding: "5px 10px" }}>
+                        <h3>{departureGroup}</h3>
+                        {departures[departureGroup].map((departure, i) => {
+                          let expressServiceMssage;
+                          if (departure.runInfo.express_stop_count > 0) {
+                            expressServiceMssage =
+                              "Limited Express/Express Service";
+                          } else {
+                            expressServiceMssage = "Stopping all stations";
+                          }
+
+                          return (
+                            <div style={{ display: "flex", margin: 5 }}>
+                              <div style={{ flex: 1 }}>
+                                <h3>
+                                  {moment(
+                                    departure.departure.scheduled_departure_utc
+                                  ).format("h:mm a")}
+                                </h3>
+                                <h3>{departure.runInfo.destination_name}</h3>
+                                <h4>{expressServiceMssage}</h4>
+                                <Link to={`/run/${departure.runInfo.run_id}`}>
+                                  More Info
+                                </Link>
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    backgroundColor: groupTheme.primaryColor,
+                                    color: groupTheme.secondaryColor,
+                                    padding: "5px 10px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    flexDirection: "column",
+                                    alignItems: "flex",
+                                    textAlign: "center"
+                                  }}
+                                >
+                                  <h3 style={{ margin: 5 }}>Platform</h3>
+                                  <h4
+                                    style={{
+                                      margin: 5,
+                                      fontWeight: 300
+                                    }}
+                                  >
+                                    {departure.departure.platform_number}
+                                  </h4>
+                                </div>
+                                <div
+                                  style={{
+                                    backgroundColor: "#2e2e2e",
+                                    color: "#fff",
+                                    textAlign: "center",
+                                    padding: "5px 10px"
+                                  }}
+                                >
+                                  {moment(
+                                    departure.departure.scheduled_departure_utc
+                                  ).isBefore(moment()) &&
+                                    moment(
+                                      moment().diff(
+                                        moment(
+                                          departure.departure
+                                            .scheduled_departure_utc
+                                        )
+                                      )
+                                    ).format("m")}
+                                  {`${(departure.departure
+                                    .estimated_departure_utc &&
+                                    moment(
+                                      moment(
+                                        departure.departure
+                                          .estimated_departure_utc
+                                      ).diff(moment())
+                                    ).format("m")) ||
+                                    (departure.departure
+                                      .scheduled_departure_utc &&
+                                      moment(
+                                        moment(
+                                          departure.departure
+                                            .scheduled_departure_utc
+                                        ).diff(moment())
+                                      ).format("m"))} 
+                                    
+                                  mins`}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-export default StationPage;
+const mapStateToProps = state => ({
+  routes: state.Routes
+});
+
+export default connect(
+  mapStateToProps,
+  null
+)(StationPage);

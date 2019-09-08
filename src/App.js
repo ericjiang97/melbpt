@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import StationPage from "./pages/StationPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { getRoutes } from "./actions/getRoutes";
+import "./index.css";
 
 class App extends React.Component {
   componentDidMount() {

@@ -7,7 +7,6 @@ import { MuiThemeProvider } from "@material-ui/core";
 import * as serviceWorker from "./serviceWorker";
 
 import App from "./App";
-import "./index.css";
 
 import muiTheme from "./config/theme";
 import configureStore from "./config/store";

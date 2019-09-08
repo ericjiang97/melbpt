@@ -26,6 +26,11 @@ export default class PtvApiService {
     return NetworkService.apiRequest(path);
   }
 
+  static getRunInfo(runId) {
+    const path = `/v3/runs/${runId}?`;
+    return NetworkService.apiRequest(path);
+  }
+
   static getPatternInfo(runId) {
     const path = `/v3/pattern/run/${runId}/route_type/0?expand=all`;
     return NetworkService.apiRequest(path);

@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "PTV Network Sans";
+  font-weight: 300;
+  src: url("./fonts/NetworkSans-1-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PTV Network Sans";
+  font-weight: 400;
+  src: url("./fonts/NetworkSans-2-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PTV Network Sans";
+  font-weight: 500;
+  src: url("./fonts/NetworkSans-4-Bold.woff2") format("woff2");
+}
