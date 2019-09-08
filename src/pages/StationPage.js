@@ -66,7 +66,16 @@ class StationPage extends React.Component {
         >
           {stationInfo && (
             <div>
-              <h2>{`${stationInfo.stop.stop_name}Station`}</h2>
+              <div>
+                <img
+                  src="https://www.ptv.vic.gov.au/themes/ptv-mpw/public/images/icons/train.svg"
+                  height="32px"
+                  style={{
+                    marginRight: 10
+                  }}
+                />
+                <h2>{`${stationInfo.stop.stop_name}Station`}</h2>
+              </div>
               <h3>{stationInfo.stop.station_type}</h3>
             </div>
           )}
@@ -118,7 +127,9 @@ class StationPage extends React.Component {
                                 </h3>
                                 <h3>{departure.runInfo.destination_name}</h3>
                                 <h4>{expressServiceMssage}</h4>
-                                <Link to={`/runs/${departure.runInfo.run_id}`}>
+                                <Link
+                                  to={`/runs/${departure.runInfo.run_id}/stops/${this.props.match.params.stopId}`}
+                                >
                                   More Info
                                 </Link>
                               </div>

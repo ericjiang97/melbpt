@@ -27,7 +27,7 @@ class App extends React.Component {
           <Router>
             <Route exact path="/" component={HomePage} />
             <Route path="/station/:stopId" component={StationPage} />
-            <Route path="/runs/:runId" component={RunsPage} />
+            <Route path="/runs/:runId/stops/:stopId" component={RunsPage} />
           </Router>
         </div>
         <div>Footer</div>

@@ -20,7 +20,7 @@ class RunsPage extends Component {
   componentDidMount = () => {
     const { match } = this.props;
     const runId = match.params.runId;
-    const stationId = match.params.stationId;
+    const stationId = match.params.stopId;
 
     PtvApiService.getPatternInfo(runId).then(result => {
       this.setState({ result });
